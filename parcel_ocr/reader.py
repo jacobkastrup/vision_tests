@@ -106,6 +106,7 @@ class LabelReader:
         pick: str = "union",
         ppocr_tier: str = "medium",
         ppocr_device: str | None = "cpu",
+        ppocr_mkldnn: bool = False,
         crop_min_side: int = 448,
         crop_max_side: int = 1600,
     ) -> None:
@@ -119,6 +120,7 @@ class LabelReader:
         self.pick = pick
         self.ppocr_tier = ppocr_tier
         self.ppocr_device = ppocr_device
+        self.ppocr_mkldnn = ppocr_mkldnn
         self.crop_min_side = crop_min_side
         self.crop_max_side = crop_max_side
         self._vlm = None
@@ -140,7 +142,7 @@ class LabelReader:
             if name == "wevisone":
                 self._engines[name] = WeVisOneOCR(self.vlm, self.max_new_tokens)
             else:
-                self._engines[name] = PPOCRv6(self.ppocr_tier, self.ppocr_device)
+                self._engines[name] = PPOCRv6(self.ppocr_tier, self.ppocr_device, mkldnn=self.ppocr_mkldnn)
         return self._engines[name]
 
     def warm_up(self, runs: Iterable[tuple[str, str]]) -> None:

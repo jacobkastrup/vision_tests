@@ -34,7 +34,9 @@ class PPOCRv6:
 
     name = "ppocr"
 
-    def __init__(self, tier: str = "medium", device: str | None = "cpu", min_score: float = 0.5) -> None:
+    def __init__(
+        self, tier: str = "medium", device: str | None = "cpu", min_score: float = 0.5, mkldnn: bool = False
+    ) -> None:
         from paddleocr import PaddleOCR  # heavy import, keep lazy
 
         kwargs: dict[str, Any] = dict(
@@ -44,6 +46,9 @@ class PPOCRv6:
             use_doc_orientation_classify=False,
             use_doc_unwarping=False,
             use_textline_orientation=False,
+            # oneDNN (MKLDNN) CPU acceleration crashes PP-OCRv6 under paddlepaddle 3.3.x:
+            # "ConvertPirAttribute2RuntimeAttribute not support pir::ArrayAttribute<pir::DoubleAttribute>"
+            enable_mkldnn=mkldnn,
         )
         if device:
             kwargs["device"] = device

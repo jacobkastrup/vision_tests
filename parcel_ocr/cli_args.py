@@ -22,6 +22,8 @@ def add_common(p: argparse.ArgumentParser) -> None:
     p.add_argument("--max-pixels", type=int, default=None, help="cap on image pixels fed to WeVisOne-VL")
     p.add_argument("--ppocr-tier", choices=("medium", "small", "tiny"), default="medium")
     p.add_argument("--ppocr-device", default="cpu", help="PP-OCRv6 device: cpu (default) or gpu:0")
+    p.add_argument("--ppocr-mkldnn", action="store_true",
+                   help="enable oneDNN CPU acceleration (faster, but crashes with paddlepaddle 3.3.x)")
 
 
 def runs_from_args(args: argparse.Namespace) -> list[tuple[str, str]]:
@@ -41,4 +43,5 @@ def reader_from_args(args: argparse.Namespace) -> LabelReader:
         args.model, backend=args.backend, device=args.device, dtype=args.dtype,
         max_pixels=args.max_pixels, pick=args.pick,
         ppocr_tier=args.ppocr_tier, ppocr_device=args.ppocr_device,
+        ppocr_mkldnn=args.ppocr_mkldnn,
     )
