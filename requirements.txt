@@ -1,4 +1,7 @@
-# The model runtime (torch, transformers==5.12.1, vllm, ...) comes from the
-# WeVisOne-VL repo -- run ./setup.sh. Extra deps for this project:
+# WeVisOne-VL's runtime (torch, transformers==5.12.1, ...) is installed by ./setup.sh
+# from the Tencent/WeVisOne-VL repo. Extra deps for this project:
 Pillow
+numpy
+paddlepaddle==3.3.1   # CPU build; PP-OCRv6 is fast on CPU and this avoids a 2nd CUDA stack
+paddleocr==3.7.0      # PP-OCRv6
 pytest

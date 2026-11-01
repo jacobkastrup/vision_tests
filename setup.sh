@@ -1,12 +1,17 @@
 #!/usr/bin/env bash
-# Install the official WeVisOne-VL runtime next to this project (needs Python >= 3.10).
-# Linux + NVIDIA GPU recommended; on CPU it runs but is slow (float32).
+# Install everything on a Linux machine (GPU VM, Colab, RunPod, ...). Needs Python >= 3.10.
+#   ./setup.sh            WeVisOne-VL (GPU) + PP-OCRv6
+#   ./setup.sh --ppocr    PP-OCRv6 only: runs on any laptop CPU (mode "full")
 set -euo pipefail
 cd "$(dirname "$0")"
-if [ ! -d third_party/WeVisOne-VL ]; then
-  git clone --depth 1 https://github.com/Tencent/WeVisOne-VL.git third_party/WeVisOne-VL
+if [ "${1:-}" != "--ppocr" ]; then
+  if [ ! -d third_party/WeVisOne-VL ]; then
+    git clone --depth 1 https://github.com/Tencent/WeVisOne-VL.git third_party/WeVisOne-VL
+  fi
+  # vllm/gradio are only for WeVisOne's fast backend / web demo; install vllm yourself if wanted
+  grep -v -E '^(vllm|gradio)' third_party/WeVisOne-VL/requirements.txt > /tmp/wevisone-req.txt
+  pip install -r /tmp/wevisone-req.txt
+  pip install -e third_party/WeVisOne-VL
 fi
-pip install -r third_party/WeVisOne-VL/requirements.txt
-pip install -e third_party/WeVisOne-VL
 pip install -r requirements.txt
-echo "Done. Weights (tencent/WeVisOne-VL-4B or -2B) download from Hugging Face on first run."
+echo "Done. Model weights download on first run (WeVisOne-VL from Hugging Face, PP-OCRv6 from Paddle's hosts)."
