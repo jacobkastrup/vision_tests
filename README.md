@@ -9,9 +9,9 @@ Read **a part of a parcel label that you describe in words**, and compare two OC
 
 ```bash
 python read_label.py label.jpg "the tracking number under the barcode" --mode all --engine both
+```
 ```text
 # illustrative output
-```
 == the tracking number under the barcode  [crop/wevisone, 1.4s]
 1Z 999 AA1 01 2345 6784
 == the tracking number under the barcode  [crop/ppocr, 1.1s]
