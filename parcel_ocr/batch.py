@@ -5,8 +5,9 @@ from __future__ import annotations
 import csv
 import json
 import re
+import sys
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Callable, Iterable
 
 from PIL import Image
 
@@ -23,16 +24,29 @@ def list_images(src: str | Path) -> list[Path]:
 
 
 def read_fields(
-    reader: LabelReader, image: Image.Image, fields: dict[str, str], runs: Iterable[tuple[str, str]]
+    reader: LabelReader,
+    image: Image.Image,
+    fields: dict[str, str],
+    runs: Iterable[tuple[str, str]],
+    on_result: Callable[[ReadResult], None] | None = None,
 ) -> list[ReadResult]:
-    """All (field, mode, engine) results for one image. ``full`` runs once, not per field."""
+    """All (field, mode, engine) results for one image. ``full`` runs once, not per field.
+
+    ``on_result`` is called as soon as each result is ready (progress output)."""
     results = []
     for mode, engine in runs:
-        if mode == "full":
-            results.append(reader.read(image, "(whole label)", "full", engine))
-        else:
-            results.extend(reader.read(image, desc, mode, engine) for desc in fields.values())
+        descs = ["(whole label)"] if mode == "full" else list(fields.values())
+        for desc in descs:
+            _log(f"{mode}/{engine}: {desc[:50]} ...")
+            result = reader.read(image, desc, mode, engine)
+            results.append(result)
+            if on_result:
+                on_result(result)
     return results
+
+
+def _log(message: str) -> None:
+    print(f"[parcel_ocr] {message}", file=sys.stderr, flush=True)
 
 
 def to_record(image_name: str, fields: dict[str, str], results: list[ReadResult]) -> dict[str, Any]:

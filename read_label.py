@@ -36,15 +36,15 @@ def main() -> int:
     image = load_image(args.image, args.rotate)
     reader = reader_from_args(args)
     fields = {f"field_{i}": d for i, d in enumerate(args.descriptions, 1)}
-    results = read_fields(reader, image, fields, runs)
 
+    def show(r):  # print each result as soon as it is ready
+        print(f"== {r.description}  [{r.run}, {r.latency_s:.2f}s]")
+        print(r.text if r.text is not None else "<not found>")
+        print(flush=True)
+
+    results = read_fields(reader, image, fields, runs, on_result=None if args.json else show)
     if args.json:
         print(json.dumps([r.to_dict() for r in results], ensure_ascii=False, indent=2))
-    else:
-        for r in results:
-            print(f"== {r.description}  [{r.run}, {r.latency_s:.2f}s]")
-            print(r.text if r.text is not None else "<not found>")
-            print()
     if args.debug:
         save_debug(image, [r for r in results if r.mode not in ("ask", "full")] or results, args.debug)
         print(f"debug overlay: {args.debug}", file=sys.stderr)
