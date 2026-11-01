@@ -1,0 +1,8 @@
+{
+  "tracking_number": "the tracking number printed under the large barcode",
+  "recipient": "the recipient (ship to) name and address block",
+  "sender": "the sender (from / return) address block",
+  "postcode": "the recipient's postal code",
+  "weight": "the parcel weight",
+  "service": "the shipping service or product name"
+}

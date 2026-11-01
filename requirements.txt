@@ -1,0 +1,4 @@
+# The model runtime (torch, transformers==5.12.1, vllm, ...) comes from the
+# WeVisOne-VL repo -- run ./setup.sh. Extra deps for this project:
+Pillow
+pytest
